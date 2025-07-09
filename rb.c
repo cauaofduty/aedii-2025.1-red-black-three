@@ -20,6 +20,29 @@ node *createNode(int value){
     return newNode;
 }
 
+//verifica se nó parâmetro é filho esquerdo, NAO E CERTO DE FUNCIONAR PARA O DIREITO
+int isLeftSon(node* root){
+    return root->father && root == root->father->left;
+}
+
+int isRoot(node* root){return !root->father;}
+
+node* grandFather(node* root){return root->father->father;}
+
+node* uncle(node *root){
+    //se o pai e filho esquerdo retorna filho direito do avô
+    if(isLeftSon(root->father)) return grandFather(root)->right;
+    else return grandFather(root)->left;
+    return ;
+}
+
+enum color nodeColor(node* root){
+    if(root) return root->color;
+    else return BLACK;
+}
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//funçoes auxiliares acima
 
 void insert(node **root, int value){
     node* auxFather, *auxRoot = *root, *newNode = createNode(value);;
@@ -56,21 +79,35 @@ void insert(node **root, int value){
     (*root)->color = BLACK; 
     
 }
-//procurar os casos de rotação & recoloração na inserção
 
-//verifica se nó parâmetro é filho esquerdo, negação funcionando para filho direito
-int isLeftSon(node* root){return root == root->father->left;}
+//recebe o avô do nó
+void rotateRight(node** trueRoot, node* root){
+    node *a = root, *b = root->left, *c = b->right;
 
-node* grandFather(node* root){return root->father->father;}
-
-//deve ter avo obrigatoriamente?
-node* uncle(node *root){
-    if(isLeftSon(root->father)) return grandFather(root)->right;
-    else return grandFather(root)->left;
-    return ;
+    b->father = a->father;
 }
+//função recolorir
+void hotfix(node** trueRoot, node *root){
 
-enum color nodeColor(node* root){
-    if(root) return root->color;
-    else return BLACK;
+    //rotações
+    if(nodeColor(uncle(root)) == BLACK){
+
+        //rotações à esquerda
+        if(isLeftSon(root->father)){
+            //caso simples
+            if(isLeftSon(root)){
+                 
+            }
+        }
+    }
+
+    else{//recoloração
+        //cores do pai e tio viram preta
+        root->father->color = BLACK;
+        uncle(root)->color = BLACK;
+        
+        //recolore avô
+        root->father->father = RED;
+        hotfix(root->father->father);
+    }
 }
