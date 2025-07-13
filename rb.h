@@ -14,4 +14,10 @@ typedef struct node{
     struct node* right;
 }node;
 
+//apenas para garantir a criação do nó sentilena
+extern node* ward;
+
+void bootstrap();
+void insert(node** root, int value);
+void preOrder(node* root);
 #endif
