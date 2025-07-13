@@ -45,20 +45,63 @@ node* uncle(node *root){
     else return grandFather(root)->left;
 }
 
+node *brother(node* root){
+    if(isLeftSon(root)) return root->father->right;
+    else return root->father->left;
+}
+
 enum color nodeColor(node* root){ return root->color;}
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //funçoes auxiliares acima
 
-//recebe o avô do nó
-void rightRotate(node** trueRoot, node* root){
-    node *a = root, *b = root->left;
 
+void rightRotate(node** trueRoot, node* root){//raiz absoluta e avô como parâmetros
+    node *a = root, *b = root->left, *d = b->right;
+    
+    //caso a seja a raiz absoluta 
+    if(isRoot(a)) *trueRoot = b;
+    
+    else if(isLeftSon(a)) a->father->left = b;
+
+    else a->father->right = b;
+    
+    //de todo jeito pai de b se torna antigo pai de a
     b->father = a->father;
+    b->right = a;
+    
+    a->father = b;
+    a->left = d;
+
+    //se o filho direito de b não é a sentinela, o campo pai dele aponta para a
+    if(d != ward) d->father = a;
+
 }
 
-//função recolorir
+void leftRotate(node** trueRoot, node* root){//raiz absoluta e avô como parâmetros
+    node *a = root, *b = root->right, *d = b->left;
+    
+    //caso a seja a raiz absoluta 
+    if(isRoot(a)) *trueRoot = b;
+    
+    else if(isLeftSon(a)) a->father->left = b;
+
+    else a->father->right = b;
+    
+    //de todo jeito pai de b se torna antigo pai de a
+    b->father = a->father;
+    b->left = a;
+    
+    a->father = b;
+    
+    a->right = d;
+
+    //se o filho direito de b não é a sentinela, o campo pai dele aponta para a
+    if(d != ward) d->father = a;
+}
+
+//função reajustar
 void hotfix(node** trueRoot, node *root){
 
     //se o pai e vermelho, precisa de uma correção
@@ -74,20 +117,40 @@ void hotfix(node** trueRoot, node *root){
 
             //chama recoloração para o avô
             hotfix(trueRoot, grandFather(root));
-        } 
 
-        /* else{//rotações ,tio preto
+        } else {//rotações,tio preto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DUVIDAS SOBRE PONTEIROS AQUI
             //rotações à direita
             if(isLeftSon(root->father)){
-                //caso simples
-                if(isLeftSon(root)){
+                //caso duplo
+                if(!isLeftSon(root)){
+                    //atualiza raiz relativa para o pivô
+                    root = root->father;
+                    leftRotate(trueRoot, root);
                     
                 }
-            }
-        } */
-        
-    }
+                //caso simples acontece direto
+                //recoloração
+                root->father->color = BLACK;
+                grandFather(root)->color = RED;
 
+                rightRotate(trueRoot, grandFather(root));//rotação esquerda em b
+
+            } else {//caso de rotação à esquerda
+                //verifica se e caso duplo
+                if(isLeftSon(root)){
+                    //atualiza root para apontar para o pivo
+                    root = root->father;
+                    rightRotate(trueRoot, root);
+                }
+                //caso simples
+                root->father->color = BLACK;
+                grandFather(root)->color = RED;
+
+                leftRotate(trueRoot, grandFather(root));
+            }
+
+        }
+    } 
 }
 
 void insert(node **root, int value){
