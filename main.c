@@ -18,6 +18,8 @@ int main(){
 				printf("\n");
 				break;
 			case 3://remover
+				scanf("%d", &value);
+				removeNode(&rb, value);
 			break;
 			case 99:
 				return 0;
