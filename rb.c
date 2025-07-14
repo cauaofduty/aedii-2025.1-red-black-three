@@ -306,7 +306,7 @@ removeHotfix(node **trueRoot, node* db){
             brother(db)->left->color = BLACK;
             db->color = BLACK;
 
-            leftRotate(trueRoot, db->father);
+            rightRotate(trueRoot, db->father);
             return;
         }
     else printf("erro, esta funcao so deve ser chamada em no duplo-preto\n");
