@@ -33,29 +33,31 @@ Podem ser criados arquivos personalizados para testar a implementação.
 Crie o arquivo "in.txt" (no VS Code roda apenas com "in" sem formato) e gere as entradas à vontade. Elas podem estar em qualquer 
 formato, espaçando as entradas, porem é recomendável ser feito o seguinte:
 
-in:
+`in`:
 
-1 11
-1 12
-3 12
-2
+1 11  
+1 12  
+3 12  
+2  
 99
 
-out:
+`out`:
 
 [11 - BLACK] 
 
-Onde:
-1 X- Inserção de X na árvore.
-2- Print de todos os elementos da árvore em percurso pre-order com indicação da cor (texto).
-3 X- Remoção de X da árvore.
+Onde:  
+1 X- Inserção de X na árvore.  
+2- Print de todos os elementos da árvore em percurso pre-order com indicação da cor (texto).  
+3 X- Remoção de X da árvore.  
 99- Finaliza o laço, deve estar obrigatoriamente em todas as entradas, do contrario gerará erro.
 
-Como utilizar:
+
+#### ⁉Como utilizar:
+
 
 Após o passo anterior de compilar, basta colar no terminal o seguinte:
 
-rb.exe < in > out
+`rb.exe < in > out`
 
 Caso não funcione, crie o arquivo out.
 
@@ -69,7 +71,9 @@ Caso queira ver as remoções, adicione uma saída quando o valor é encontrado 
 
 Esse readme foi gerado no Chat GPT e alterado por mim, pois eu estava com a agenda corrida e finalizando os testes na madrugada do dia da 1ª prova da disciplina (AED2).
 
-🧑‍💻 Autor
-Cauã de Souza Santos
-Estudante de Bacharelado em Ciências da Computação
+---
+
+## 🧑‍💻 Autor  
+Cauã de Souza Santos  
+Estudante de Bacharelado em Ciências da Computação  
 Desenvolvido como atividade da disciplina Algoritmos e Estruturas de Dados II
