@@ -9,17 +9,33 @@ node* ward = &Ward;
 node doubleBlack;
 node* db = &doubleBlack;
 
-void bootstrap(){//inicializa o ponteiro sentinela e o no db no inicio do programa
-    ward->color = BLACK;
-    ward->father = ward;
-    ward->left = ward;
-    ward->right = ward;
+
+void doubleBlackIgnite(){
+    
+    db->value = -2;//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<DEBUG
 
     db->color = DOUBLE_BLACK;
     db->father = ward;
     db->left = ward;
     db->right = ward;
+
 }
+void wardIgnite(){
+    ward->value = -1;//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<DEBUG 
+    
+    ward->color = BLACK;
+    ward->father = ward;
+    ward->left = ward;
+    ward->right = ward;
+
+}
+
+//SRP kk
+void bootstrap(){//inicializa o ponteiro sentinela e o no db no inicio do programa
+    wardIgnite();
+    doubleBlackIgnite();
+}
+
 node *createNode(int value){
 
     node* newNode = (node*)malloc(sizeof(node));
@@ -137,7 +153,7 @@ void hotfix(node** trueRoot, node *root){
             //chama recoloração para o avô
             hotfix(trueRoot, grandFather(root));
 
-        } else {//rotações,tio preto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DUVIDAS SOBRE PONTEIROS AQUI
+        } else {//rotações,tio preto
             //rotações à direita
             if(isLeftSon(root->father)){
                 //caso duplo
@@ -211,15 +227,26 @@ void insert(node **root, int value){
     
 }
 
+//desconecta o duplo preto da arvore (faz ignite de novo)
+void removeDoubleBlack(){
+    //atualiza pais
+    if (isLeftSon(db)) db->father->left = ward;
+    
+    else db->father->right = ward;
+    
+    doubleBlackIgnite();
+}
+
 //função que resolve problema do duplo preto
-removeHotfix(node **trueRoot, node* db){
+void removeHotfix(node **trueRoot, node* db){
+    
     if(nodeColor(db) == DOUBLE_BLACK){//garante que so vai fazer alterações em duplo preto
         //caso ii)(ambos lados) rotação para o lado do duplo preto e recoloração de irmão -> black, pai -> red (logo antes)
-        if(color(db->father) == BLACK &&//pai preto
-        (brother(db)) == RED &&  //irmao vermelho
-        color(brother(db)->left) == BLACK &&//sobrinhos pretos
-        color(brother(db)->right) == BLACK){
-
+        if(nodeColor(db->father) == BLACK &&//pai preto
+        nodeColor(brother(db)) == RED &&  //irmao vermelho
+        nodeColor(brother(db)->left) == BLACK &&//sobrinhos pretos
+        nodeColor(brother(db)->right) == BLACK){
+            printf("passou no hotfix remove caso ii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
             //guarda referência para o pai
             node* auxFather = db->father;
 
@@ -233,164 +260,163 @@ removeHotfix(node **trueRoot, node* db){
             else rightRotate(trueRoot, auxFather);
             
             removeHotfix(trueRoot, db);
-            return;
         }
         //caso iii)irmão ,pai e sobrinhos de db pretos
-        else if((color(db->father) == BLACK &&//pai preto
-        (brother(db)) == BLACK &&  //irmao preto
-        color(brother(db)->left) == BLACK &&//sobrinhos pretos
-        color(brother(db)->right) == BLACK)){
-
-            //recolore irmão p/vermelho, pai para duplo-preto e db para preto
+        else if((nodeColor(db->father) == BLACK &&//pai preto
+        nodeColor(brother(db)) == BLACK &&  //irmao preto
+        nodeColor(brother(db)->left) == BLACK &&//sobrinhos pretos
+        nodeColor(brother(db)->right) == BLACK)){
+            printf("passou no hotfix remove caso iii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+            //recolore irmão p/vermelho, pai para duplo-preto e db para preto (removido)
             brother(db)->color = RED;
             db->color = BLACK;
             db->father->color = DOUBLE_BLACK;
-            
+
             removeHotfix(trueRoot, db->father);
-            return;
+            removeDoubleBlack();
         }
         //caso iv)pai vermelho, irmão e sobrinhos pretos -> recoloração e remoção duplo-preta
-        else if((color(db->father) == RED &&//pai vermelho
-        (brother(db)) == BLACK &&  //irmao preto
-        color(brother(db)->left) == BLACK &&//sobrinhos pretos
-        color(brother(db)->right) == BLACK)){
-            //recolore pai p/preto, irmão p/vermelho e duplo-preto pra preto
+        else if((nodeColor(db->father) == RED &&//pai vermelho
+        nodeColor(brother(db)) == BLACK &&  //irmao preto
+        nodeColor(brother(db)->left) == BLACK &&//sobrinhos pretos
+        nodeColor(brother(db)->right) == BLACK)){
+            printf("passou no hotfix remove caso iv\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+
+            //recolore pai p/preto, irmão p/vermelho e duplo-preto pra preto, removendo-o
             db->father->color = BLACK;
             brother(db)->color = RED;
-            db->color = BLACK;
-            return;
+            removeDoubleBlack();
         }
         //caso v-i) pai roxo , irmão preto, sobrinho prox ao eixo de simetria vermelho e outro irmão preto
-        else if((brother(db)) == BLACK &&  //irmao preto
-        color(brother(db)->left) == RED &&//sobrinho esquerdo vermelho
-        color(brother(db)->right) == BLACK){//sobrinho direito preto
+        else if(isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
+        nodeColor(brother(db)->left) == RED &&//sobrinho esquerdo vermelho
+        nodeColor(brother(db)->right) == BLACK){//sobrinho direito preto
+            printf("passou no hotfix remove caso v-i\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
             //recolorindo antes de rotacionar irmão para vermelho e sobrinho perto do eixo para preto (novo pai na rotação)
             brother(db)->color = RED;
             brother(db)->left->color = BLACK;
             rightRotate(trueRoot, brother(db));//rotação "para fora" do eixo de simetria
-            removeHotfix(trueRoot, db);
-            return;
+            removeDoubleBlack();
     }
     //caso v-ii) simetrico
-        else if((brother(db)) == BLACK &&  //irmao preto
-        color(brother(db)->left) == BLACK &&//sobrinho esquerdo preto
-        color(brother(db)->right) == RED){//sobrinho direito vermelho
+        else if(!isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
+        nodeColor(brother(db)->left) == BLACK &&//sobrinho esquerdo preto
+        nodeColor(brother(db)->right) == RED){//sobrinho direito vermelho
+            printf("passou no hotfix remove caso v-ii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
             //recolorindo antes de rotacionar irmão para vermelho e sobrinho perto do eixo para preto (novo pai na rotação)
             brother(db)->color = RED;
             brother(db)->right->color = BLACK;
             leftRotate(trueRoot, brother(db));
-
-            removeHotfix(trueRoot, db);
-            return;
+            removeDoubleBlack();
     }
     //caso vi-i) pai e sobrinho perto do eixo de simetria roxos, irmão preto e sobrinho de fora do eixo vermelho
-    else if((brother(db)) == BLACK &&  //irmao preto
-        color(brother(db)->right) == RED){//sobrinho direito vermelho
+    else if(isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
+        nodeColor(brother(db)->right) == RED){//sobrinho direito vermelho
+            printf("passou no hotfix remove caso vi-i\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
 
-            //faz recolorações devidamente antes da rotação e no duplo-preto se torna preto
+            //faz recolorações devidamente antes da rotação e no duplo-preto se torna preto (removido)
             brother(db)->color = db->father->color;
             db->father->color = BLACK;
             brother(db)->right->color = BLACK;
-            db->color = BLACK;
-
+            
             leftRotate(trueRoot, db->father);
-            return;
+            removeDoubleBlack();
         }
         //caso vi-ii) simétrico
-    else if((brother(db)) == BLACK &&  //irmao preto
-        color(brother(db)->left) == RED){//sobrinho esquerdo vermelho
-
+    else if(!isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
+        nodeColor(brother(db)->left) == RED){//sobrinho esquerdo vermelho
+            printf("passou no hotfix remove caso vii-ii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+            //chegou
+            printf("chegou\n");
             //faz recolorações devidamente antes da rotação e no duplo-preto se torna preto
             brother(db)->color = db->father->color;
             db->father->color = BLACK;
             brother(db)->left->color = BLACK;
-            db->color = BLACK;
-
+            
             rightRotate(trueRoot, db->father);
-            return;
+            removeDoubleBlack();
         }
-    else printf("erro, esta funcao so deve ser chamada em no duplo-preto\n");
-    
     }
 }
+//adicionei raiz relativa para poder usar a função recursivamente 
+void removeNode(node** trueRoot,node* root, int value){
 
-void removeNode(node** trueRoot, int value){
+    //para minimizar gargalos, recebe o no por onde começar a procurar (conteudo da raiz absoluta por default)
+    node* target = root; 
 
-    node* target = *trueRoot; 
-
-    while (target != ward){
-        //valor encontrado
-        if(target->value == value){
-            //casos onde o target não possui filhos 
-            if(target->left == ward && target->right == ward){
-                //e é raiz
-                if(isRoot(target)){
-                    *trueRoot = ward; 
-                }
-                //ou é vermelho
-                else if(nodeColor(target) == RED){
-                    if(isLeftSon(target)) target->father->left = ward;
-                    else target->father->right = ward;
-                } 
-                //ou é preto
-                else{
-                    //atualiza pai de db
-                    db->color = DOUBLE_BLACK;
-                    db->father = target->father;
-
-                    //atualiza respectivo filho do pai de target para ser db 
-                    if(isLeftSon(target)) target->father->left = db;
-
-                    else target->father->right = db; 
-
-                    //realiza correção com função de hotfix apropriada
-                    removeHotfix(trueRoot, db);
-                }
-            }
-            //caso apenas um filho esquerdo
-            else if(target->left != ward && target->right == ward ){
-
-                //caso raiz, substitui pelo filho
-                if(isRoot(target)){
-                    *trueRoot = target->left; //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>RAIZ PODERIA SAIR DAQUI DIFERENTE DE PRETA?
-                    (*trueRoot)->color = BLACK;//sou inseguro
-                }
-             
-
-                //do contrario faz substituição cabível
-                else if(isLeftSon(target)) target->father->left = target->left;
-                
-                else target->father->right = target->left;
-            }
-            //caso apenas um filho direito
-            else if(target->left == ward && target->right != ward ){
-                
-                //caso raiz, substitui pelo filho
-                if(isRoot(target)){
-                    *trueRoot = target->right;
-                    (*trueRoot)->color = BLACK;//sou inseguro
-                }    
-
-                //do contrario faz substituição cabível
-                else if(isLeftSon(target)) target->father->left = target->right;
-                
-                else target->father->right = target->right;
-            }
-            //caso ambos filhos não nulos
-            else {
-                //substitui valor de target por sucessor da esquerda
-                target->value = sucessor(target->left);
-                removeNode(trueRoot, target->value);
-                break;
-            }
-            //ponto centralizado que libera a memoria de no removido
-            free(target);
-            break;
-        }
+    while (target->value != value){
         //itera na árvore
-        else if(value > target->value) target = target->right;
+        if(target == ward) break;
+        if(value > target->value) target = target->right;
 
         else target = target->left;
+    }
+    if(target == ward) {//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+        printf("valor %d nao encontrado\n", value);
+        return;
+    }
+
+    //valor encontrado
+    if(target->value == value){
+        printf("valor %d encontrado\n", target->value);//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+        //casos onde o target não possui filhos 
+        if(target->left == ward && target->right == ward){
+            //e é raiz
+            if(isRoot(target)){//isso elimina a necessidade da verificação duplo preta na raiz.
+                *trueRoot = ward; 
+            }
+            //ou é vermelho
+            else if(nodeColor(target) == RED){
+                if(isLeftSon(target)) target->father->left = ward;
+                else target->father->right = ward;
+            } 
+            //ou é preto
+            else{
+                //atualiza pai de db
+                db->father = target->father;
+                db->color = DOUBLE_BLACK;
+
+                //atualiza respectivo filho do pai de target para ser db 
+                if(isLeftSon(target)) target->father->left = db;
+
+                else target->father->right = db; 
+
+                //realiza correção com função de hotfix apropriada
+                removeHotfix(trueRoot, db);
+            }
+            //libera no
+            free(target);
+        }
+        //caso apenas um filho esquerdo
+        else if(target->left != ward && target->right == ward ){
+
+            //caso raiz, substitui pelo filho
+            if(isRoot(target)) *trueRoot = target->left; 
+            
+            //copia valor do no filho e remove-o na subarvore
+            target->value = target->left->value;
+            removeNode(trueRoot, target->left ,target->value);
+            return;
+            
+        }
+        //caso apenas um filho direito
+        else if(target->left == ward && target->right != ward ){
+            
+            //caso raiz, substitui pelo filho
+            if(isRoot(target)) *trueRoot = target->right;
+                
+            //copia valor do no filho e remove-o na subarvore
+            target->value = target->right->value;
+            removeNode(trueRoot, target->right ,target->value);
+            return;
+        }
+        //caso ambos filhos não nulos
+        else {
+            //substitui valor de target por sucessor da esquerda
+            target->value = sucessor(target->left);
+            removeNode(trueRoot, target->left, target->value);
+            return;
+        }
 
     }
 }

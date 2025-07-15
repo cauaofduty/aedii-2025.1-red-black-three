@@ -19,6 +19,6 @@ extern node* db;
 
 void bootstrap();
 void insert(node** root, int value);
-void removeNode(node** root, int value); 
+void removeNode(node** trueRoot, node* root, int value); 
 void preOrder(node* root);
 #endif
