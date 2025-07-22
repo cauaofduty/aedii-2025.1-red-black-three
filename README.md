@@ -45,12 +45,14 @@ formato, espaçando as entradas, porem é recomendável ser feito o seguinte:
 
 [11 B] 
 
-Onde:  
-1 X- Inserção de X na árvore.  
-2- Print de todos os elementos da árvore em percurso pre-order com indicação da cor (texto).  
-3 X- Remoção de X da árvore.  
-99- Finaliza o laço, deve estar obrigatoriamente em todas as entradas, do contrario gerará erro.
+## 📘 Onde:
 
+| Código   | Ação                          | Descrição                                                                 |
+|----------|-------------------------------|---------------------------------------------------------------------------|
+| `1 X`    | Inserção                      | Insere o valor `X` na árvore                                              |
+| `2`      | Print                         | Imprime todos os elementos da árvore em pré-ordem com indicação textual da cor (`B`, `R`, etc.) |
+| `3 X`    | Remoção                       | Remove o valor `X` da árvore                                              |
+| `99`     | Finalizar                     | Encerra o programa (obrigatório ao final da entrada)                      |
 
 #### ⁉Como utilizar:
 
