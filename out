@@ -1,4 +1,15 @@
+[30 B][20 B][50 B][40 R][60 R]
+valor 20 encontrado
+passou no hotfix remove caso vi-i
+[50 B][30 B][40 R][60 B]
 valor 40 encontrado
-passou no hotfix remove caso vii-ii
-chegou
-[50 - BLACK] [10 - RED] [9 - BLACK] [30 - BLACK] [70 - RED] [60 - BLACK] [55 - RED] [65 - RED] [90 - BLACK] 
+[50 B][30 B][60 B]
+valor 30 encontrado
+passou no hotfix remove caso iii
+caso i e util.
+[50 B][60 R]
+[60 B][50 B][70 R][65 B][66 R][80 B]
+valor 50 encontrado
+passou no hotfix remove caso ii
+passou no hotfix remove caso vi-i
+[70 B][65 R][60 B][66 B][80 B]

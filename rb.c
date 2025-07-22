@@ -10,7 +10,7 @@ node doubleBlack;
 node* db = &doubleBlack;
 
 
-void doubleBlackIgnite(){
+void igniteDoubleBlack(){
     
     db->value = -2;//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<DEBUG
 
@@ -20,7 +20,7 @@ void doubleBlackIgnite(){
     db->right = ward;
 
 }
-void wardIgnite(){
+void igniteWard(){
     ward->value = -1;//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<DEBUG 
     
     ward->color = BLACK;
@@ -32,8 +32,8 @@ void wardIgnite(){
 
 //SRP kk
 void bootstrap(){//inicializa o ponteiro sentinela e o no db no inicio do programa
-    wardIgnite();
-    doubleBlackIgnite();
+    igniteWard();
+    igniteDoubleBlack();
 }
 
 node *createNode(int value){
@@ -234,15 +234,22 @@ void removeDoubleBlack(){
     
     else db->father->right = ward;
     
-    doubleBlackIgnite();
+    igniteDoubleBlack();
 }
 
 //função que resolve problema do duplo preto
 void removeHotfix(node **trueRoot, node* db){
     
+
+    
     if(nodeColor(db) == DOUBLE_BLACK){//garante que so vai fazer alterações em duplo preto
+        //caso i- raiz
+        if(isRoot(db)) {
+            printf("caso oi, sim ele e util.\n");
+            db->color = BLACK;
+        }
         //caso ii)(ambos lados) rotação para o lado do duplo preto e recoloração de irmão -> black, pai -> red (logo antes)
-        if(nodeColor(db->father) == BLACK &&//pai preto
+        else if(nodeColor(db->father) == BLACK &&//pai preto
         nodeColor(brother(db)) == RED &&  //irmao vermelho
         nodeColor(brother(db)->left) == BLACK &&//sobrinhos pretos
         nodeColor(brother(db)->right) == BLACK){
@@ -296,7 +303,7 @@ void removeHotfix(node **trueRoot, node* db){
             brother(db)->color = RED;
             brother(db)->left->color = BLACK;
             rightRotate(trueRoot, brother(db));//rotação "para fora" do eixo de simetria
-            removeDoubleBlack();
+            removeHotfix(trueRoot, db);
     }
     //caso v-ii) simetrico
         else if(!isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
@@ -307,7 +314,7 @@ void removeHotfix(node **trueRoot, node* db){
             brother(db)->color = RED;
             brother(db)->right->color = BLACK;
             leftRotate(trueRoot, brother(db));
-            removeDoubleBlack();
+            removeHotfix(trueRoot, db);
     }
     //caso vi-i) pai e sobrinho perto do eixo de simetria roxos, irmão preto e sobrinho de fora do eixo vermelho
     else if(isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
@@ -325,7 +332,7 @@ void removeHotfix(node **trueRoot, node* db){
         //caso vi-ii) simétrico
     else if(!isLeftSon(db) && nodeColor(brother(db)) == BLACK &&  //irmao preto
         nodeColor(brother(db)->left) == RED){//sobrinho esquerdo vermelho
-            printf("passou no hotfix remove caso vii-ii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+            printf("passou no hotfix remove caso vi-ii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
             //chegou
             printf("chegou\n");
             //faz recolorações devidamente antes da rotação e no duplo-preto se torna preto
@@ -426,19 +433,20 @@ void preOrder(node* root){
     if(root == ward) return;
 
     
-    printf("[%d - ", root->value, root->color);
+    printf("[%d ", root->value, root->color);
 
     switch(root->color){
         case RED: 
-            printf("RED] ");
+            printf("R]");
             break;
         case BLACK: 
-            printf("BLACK] ");
+            printf("B]");
             break;
-        case DOUBLE_BLACK: 
-            printf("DOUBLE BLACK] ");
+        case DOUBLE_BLACK: //para debug
+            printf("DB]");
             break;
     }
+    
 
     preOrder(root->left);
 

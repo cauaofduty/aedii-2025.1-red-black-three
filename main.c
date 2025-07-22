@@ -2,6 +2,7 @@
 #include "rb.h"
 
 int main(){
+	//realiza preparações necessárias (inicializa nó sentinela e duplo-preto)
 	bootstrap();
 	int opt = 0, value, valueReturn;
 	node* rb = ward;
@@ -20,7 +21,7 @@ int main(){
 			case 3://remover
 				scanf("%d", &value);
 				removeNode(&rb, rb, value);
-			break;
+				break;
 			case 99:
 				return 0;
 
