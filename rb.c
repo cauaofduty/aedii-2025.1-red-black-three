@@ -244,27 +244,26 @@ void removeHotfix(node **trueRoot, node* db){
     
     if(nodeColor(db) == DOUBLE_BLACK){//garante que so vai fazer alterações em duplo preto
         //caso i- raiz
-        if(isRoot(db)) {
-            printf("caso oi, sim ele e util.\n");
+        if(isRoot(db)){
             db->color = BLACK;
-        }
+            printf("caso i, sim ele e util\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+        } 
+        
         //caso ii)(ambos lados) rotação para o lado do duplo preto e recoloração de irmão -> black, pai -> red (logo antes)
         else if(nodeColor(db->father) == BLACK &&//pai preto
         nodeColor(brother(db)) == RED &&  //irmao vermelho
         nodeColor(brother(db)->left) == BLACK &&//sobrinhos pretos
         nodeColor(brother(db)->right) == BLACK){
-            printf("passou no hotfix remove caso ii\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
-            //guarda referência para o pai
-            node* auxFather = db->father;
-
+            printf("caso i, sim ele e util\n");//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
+            
             //faz recolorações
             brother(db)->color = BLACK;
             db->father->color = RED;
 
             //realiza rotações no pai do duplo preto
-            if(isLeftSon(db))  leftRotate(trueRoot, auxFather);
+            if(isLeftSon(db))  leftRotate(trueRoot, db->father);
             
-            else rightRotate(trueRoot, auxFather);
+            else rightRotate(trueRoot, db->father);
             
             removeHotfix(trueRoot, db);
         }
@@ -350,20 +349,18 @@ void removeNode(node** trueRoot,node* root, int value){
     //para minimizar gargalos, recebe o no por onde começar a procurar (conteudo da raiz absoluta por default)
     node* target = root; 
 
-    while (target->value != value){
+    while (target != ward){
         //itera na árvore
-        if(target == ward) break;
+        if(target->value == value) break;
         if(value > target->value) target = target->right;
 
         else target = target->left;
     }
-    if(target == ward) {//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
-        printf("valor %d nao encontrado\n", value);
-        return;
-    }
+    //caso valor n/encontrado, por precaução
+    if(target == ward) return;
 
     //valor encontrado
-    if(target->value == value){
+    else {
         //casos onde o target não possui filhos 
         if(target->left == ward && target->right == ward){
             //e é raiz
@@ -431,7 +428,7 @@ void preOrder(node* root){
     if(root == ward) return;
 
     
-    printf("[%d ", root->value, root->color);
+    printf("[%d ", root->value);
 
     switch(root->color){
         case RED: 
