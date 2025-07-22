@@ -347,7 +347,6 @@ void removeHotfix(node **trueRoot, node* db){
 }
 //adicionei raiz relativa para poder usar a função recursivamente 
 void removeNode(node** trueRoot,node* root, int value){
-
     //para minimizar gargalos, recebe o no por onde começar a procurar (conteudo da raiz absoluta por default)
     node* target = root; 
 
@@ -365,7 +364,6 @@ void removeNode(node** trueRoot,node* root, int value){
 
     //valor encontrado
     if(target->value == value){
-        printf("valor %d encontrado\n", target->value);//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>DEBUG
         //casos onde o target não possui filhos 
         if(target->left == ward && target->right == ward){
             //e é raiz
