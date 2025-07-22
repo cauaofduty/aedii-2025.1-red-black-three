@@ -43,7 +43,7 @@ formato, espaçando as entradas, porem é recomendável ser feito o seguinte:
 
 `out`:
 
-[11 - BLACK] 
+[11 B] 
 
 Onde:  
 1 X- Inserção de X na árvore.  
